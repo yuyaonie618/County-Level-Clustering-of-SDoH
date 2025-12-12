@@ -1,0 +1,58 @@
+## 4. Data Pre-processing
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import PowerTransformer, StandardScaler, MinMaxScaler
+from scipy.stats.mstats import winsorize
+
+data = pd.read_excel("New_Variables.xlsx", dtype={"FIPS": str},index_col="FIPS")
+df = data.copy()
+
+# Process categorical variables
+# Rescale 0 → 0, 1 → 0.5, 2 → 1
+hpsa_vars = ["AHRF_HPSA_DENTIST", "AHRF_HPSA_MENTAL", "AHRF_HPSA_PRIM"]
+mapping_0_2_1 = {0: 0, 1: 0.5, 2: 1}
+for col in hpsa_vars:
+    df[col] = df[col].map(mapping_0_2_1)
+    
+# NCHS_URCS_2013: scale to 0–1 with step 0.2
+# Original values are 1–6, so convert to 0–5 then divide by 5
+df["NCHS_URCS_2013"] = (df["NCHS_URCS_2013"] - 1) / 5
+
+categorical_vars = ["STATE"]+["HRSA_MUA_COUNTY"] + hpsa_vars + ["NCHS_URCS_2013"]
+
+# Apply transformations to continuous variables
+# Select numerical continuous variables
+continuous_vars = [col for col in df.columns if col not in categorical_vars]
+
+# Winsorize first
+df[continuous_vars] = df[continuous_vars].apply(
+    lambda s: winsorize(s, limits=[0.01, 0.01])
+)
+
+# Prepare container for output
+yj_df = df[continuous_vars].copy()
+failed = []
+
+# Apply Yeo–Johnson column by column
+for col in continuous_vars:
+    try:
+        pt = PowerTransformer(method="yeo-johnson", standardize=False)
+        yj_df[[col]] = pt.fit_transform(df[[col]])
+    except Exception as e:
+        print(f"Yeo–Johnson failed for {col}: {e}")
+        failed.append(col)
+
+# Apply fallback transform
+for col in failed:
+    print(f"Using log1p fallback for {col}")
+    min_val = df[col].min()
+    yj_df[col] = np.log1p(df[col] - min_val + 1)
+
+# Replace continuous vars with transformed version
+df[continuous_vars] = yj_df
+
+# Standardize
+scaler = StandardScaler()
+df[continuous_vars] = scaler.fit_transform(df[continuous_vars])
+
+df.to_excel("Pre_Processing_Variables.xlsx", index=True)
