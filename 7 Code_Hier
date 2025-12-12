@@ -78,7 +78,7 @@ X = df.values
 H = 0.93
 plt.figure(figsize=(12, 6))
 dendrogram(Z, color_threshold=None)
-plt.axhline(y=H, color='r') # 手动加线
+plt.axhline(y=H, color='r') 
 plt.show()
 
 # KS similarity
@@ -132,7 +132,7 @@ Z = linkage(pdist(X, metric="correlation"), method="average")
 merge_heights = Z[:, 2]
 
 k = 3
-labels_hier = fcluster(Z, t=k, criterion='maxclust')  # 直接要 6 个 cluster
+labels_hier = fcluster(Z, t=k, criterion='maxclust')  
 df["HierCluster-3"] = labels_hier
 df["HierCluster-3"].value_counts()
 
@@ -140,7 +140,7 @@ Z = linkage(pdist(X, metric="correlation"), method="average")
 merge_heights = Z[:, 2]
 
 k = 6
-labels_hier = fcluster(Z, t=k, criterion='maxclust')  # 直接要 6 个 cluster
+labels_hier = fcluster(Z, t=k, criterion='maxclust')  
 df["HierCluster"] = labels_hier
 df["HierCluster"].value_counts()
 
@@ -390,5 +390,3 @@ plt.title(f"Distribution of {var} by Cluster")
 plt.xlabel(var)
 plt.legend()
 plt.show()
-
-
