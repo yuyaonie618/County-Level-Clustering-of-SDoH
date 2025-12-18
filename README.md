@@ -1,4 +1,6 @@
 ## County-Level Clustering of Social Determinants of Health (SDOH)
 
+Author: Yifan Chen (lavender.fanfan@gmail.com), Yuyao Nie (yuyaonie524@gmail.com)
+
 ### Abstract
 This study examines county-level disparities in the United States by clustering within integrated Social Determinants of Health (SDOH) and health outcome data. After extensive preprocessing, variable conversion, and imputation, we applied within-domain principal component analysis (PCA) to reduce around 200 variables into interpretable components across 16 domains. Using these components, we conducted clustering with both K-means and hierarchical methods. K-means identified three broad county groups reflecting differences in healthcare capacity, socioeconomic status, health behaviors, and population health outcomes. Hierarchical clustering, using the correlation distance and average linkage, revealed six more detailed clusters: urban advantage, rural disadvantage, high-resource regions, and sparsely populated areas with limited access to care. Key distinguishing factors across clusters included specialist availability, structural healthcare resources, education, and unhealthy behaviors. The resulting county typologies offer data-driven insights to guide local governments with more precise resource allocation and to reduce disparities and improve population health.
